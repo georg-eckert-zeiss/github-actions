@@ -1,0 +1,16 @@
+# Workflow to build and publish the develop branch
+
+name: Build on develop
+
+on:
+  workflow_call:
+
+jobs:
+  develop:
+    uses: ./build-and-pack.yml
+    with:
+      configuration: "Debug"
+      prerelease: "true"
+      suffix: "beta"
+      publish_target: "nuget.org"
+    secrets: inherit
