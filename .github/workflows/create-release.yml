@@ -46,12 +46,22 @@ jobs:
 
           git add *.csproj
           git commit -m "Raises version number to ${{ env.NUGET_VERSION }}"
+          
           echo Checkout main
           git checkout main
+          
           echo Merge release into main
           git merge --no-ff release/${{ env.NUGET_VERSION }}
+          
+          echo Deleting temporary release branch
+          git branch -d release/${{ env.NUGET_VERSION }}
+          
           echo Tag release commit
-          git tag releases/${{ env.NUGET_VERSION }}
+          git tag release/${{ env.NUGET_VERSION }}
+          
+          echo Creating support branch
+          git checkout -b support/${{ env.NUGET_VERSION }}
+          
           echo Checkout develop
           git checkout develop
           echo Merge back main into develop
@@ -63,8 +73,8 @@ jobs:
           git push origin main --tags
           git checkout develop
           git push origin develop
-          git checkout release/${{ env.NUGET_VERSION }}
-          git push origin release/${{ env.NUGET_VERSION }}
+          git checkout support/${{ env.NUGET_VERSION }}
+          git push origin support/${{ env.NUGET_VERSION }}
           
   build-and-publish:
     needs: release-flow
