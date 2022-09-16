@@ -4,13 +4,19 @@ name: Build on develop
 
 on:
   workflow_call:
+    inputs:
+      do_pack:
+        description: 'If this build should be packed as NuGet package.'
+        required: true
+        type: boolean
 
 jobs:
   develop:
-    uses: ./build-and-pack.yml
+    uses: ./.github/workflows/build-and-pack.yml
     with:
       configuration: "Debug"
-      prerelease: "true"
+      do_pack: ${{ inputs.do_pack }}
+      is_prerelease: true
       suffix: "beta"
       publish_target: "nuget.org"
     secrets: inherit

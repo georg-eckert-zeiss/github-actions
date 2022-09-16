@@ -1,10 +1,15 @@
-# Workflow to build and publish feaute/fix branches
+# Workflow to build and publish feature/fix branches
 
 name: Build on feature/fix branch
 
 # Run on manual trigger only
 on:
   workflow_call:
+    inputs:
+      do_pack:
+        description: 'If this build should be packed as NuGet package.'
+        required: true
+        type: boolean
 
 jobs:
   get-feature-branch:
@@ -28,10 +33,11 @@ jobs:
 
   feature-branch:
     needs: get-feature-branch
-    uses: ./build-and-pack.yml
+    uses: ./.github/workflows/build-and-pack.yml
     with:
       configuration: "Debug"
-      prerelease: "true"
+      is_prerelease: true
+      do_pack: ${{ inputs.do_pack }}
       suffix: "alpha-${{ needs.get-feature-branch.outputs.branch_name }}"
       publish_target: "None"
     secrets: inherit

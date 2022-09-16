@@ -7,10 +7,11 @@ on:
   workflow_call:
 
 jobs:
+
   compute-version:
-    uses: ./gitversion.yml
+    uses: ./.github/workflows/gitversion.yml
     with:
-      prerelease: "false"
+      is_prerelease: false
 
   release-flow:
     needs: compute-version
@@ -39,23 +40,21 @@ jobs:
       - name: Commit and merge changes
         run: |
           echo Change version number, commit and push
-          # TODO Do for all csproj files in repo
-          sed -i 's#<PackageVersion>[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]#<PackageVersion>${{ env.NUGET_VERSION }}#g' ./src/<PROJECT>/<PROJECT>.csproj
-          sed -i 's#<AssemblyVersion>[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]#<AssemblyVersion>${{ env.NUGET_VERSION }}#g' ./src/<PROJECT>/<PROJECT>.csproj
+          find . -type f -name "*.csproj" -exec sed -i 's#<PackageVersion>[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]#<PackageVersion>${{ env.NUGET_VERSION }}#g' '{}' \;
+          find . -type f -name "*.csproj" -exec sed -i 's#<AssemblyVersion>[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]#<AssemblyVersion>${{ env.NUGET_VERSION }}#g' '{}' \;
 
-          # TODO Add all csproj files
-          git add ./src/<PROJECT>/<PROJECT>.csproj
+          git add *.csproj
           git commit -m "Raises version number to ${{ env.NUGET_VERSION }}"
           echo Checkout main
           git checkout main
           echo Merge release into main
           git merge --no-ff release/${{ env.NUGET_VERSION }}
           echo Tag release commit
-          git tag v${{ env.NUGET_VERSION }}
+          git tag releases/${{ env.NUGET_VERSION }}
           echo Checkout develop
           git checkout develop
           echo Merge back main into develop
-          git merge --no-ff master
+          git merge --no-ff main
           
       - name: Push all branches
         run: |
@@ -71,7 +70,8 @@ jobs:
     uses: ./.github/workflows/build-and-pack.yml
     with:
       configuration: "Release"
-      prerelease: "false"
+      do_pack: true
+      is_prerelease: false
       suffix: "stable"
       publish_target: "nuget.org"
     secrets: inherit
