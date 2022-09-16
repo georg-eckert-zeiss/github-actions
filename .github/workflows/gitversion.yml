@@ -5,14 +5,15 @@ name: GitVersion
 on:
   workflow_call:
     inputs:
-      prerelease:
+      is_prerelease:
         description: 'Define if this is a prerelease.'
         required: true
-        type: string
+        type: boolean
       suffix:
         description: 'Define the prerelease suffix, e.g. alpha.'
-        required: true
+        required: false
         type: string
+        default: ""
     outputs:
       package_version:
         description: "Computed version for the package (SemVer)"
@@ -42,7 +43,7 @@ jobs:
         
     # Format is X.X.X-alpha000X-X, e.g. 8.1.0-alpha0008-42, where 0008 means 8 commits since last tag and 42 is the github run number.
     - name: Append prerelease suffix
-      if: inputs.prerelease == 'true'
+      if: inputs.is_prerelease
       run: |
         echo "::set-output name=prerelease_suffix::-${{ inputs.suffix }}$(printf %4s ${{ steps.gitversion.outputs.increment }} | tr ' ' 0)-${{ github.run_number }}"
       id: prerelease_version
