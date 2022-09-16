@@ -39,6 +39,7 @@ jobs:
       id: gitversion
       uses: paulhatch/semantic-version@v4.0.2
       with:
+        tag_prefix: "release/"
         format: "${major}.${minor}.${patch}"
         
     # Format is X.X.X-alpha000X-X, e.g. 8.1.0-alpha0008-42, where 0008 means 8 commits since last tag and 42 is the github run number.
