@@ -1,6 +1,3 @@
-# Build, test and pack the source code as a nuget.
-# It's assumed that all source files reside in a directory 'src' inside the root of the repository.
-
 name: Build, test & pack
 
 on:
