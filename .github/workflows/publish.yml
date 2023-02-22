@@ -1,5 +1,3 @@
-# Publish the build artifact (Nuget) to a target nuget feed.
-
 name: Publish-Artifact
 
 on:
