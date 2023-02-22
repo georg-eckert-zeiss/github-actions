@@ -1,5 +1,3 @@
-# Compute nuget version using GitVersion.
-
 name: GitVersion
 
 on:
