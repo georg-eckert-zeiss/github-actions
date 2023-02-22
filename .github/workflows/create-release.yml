@@ -1,5 +1,3 @@
-# Create a stable NuGet release.
-
 name: Create release
 
 on:
